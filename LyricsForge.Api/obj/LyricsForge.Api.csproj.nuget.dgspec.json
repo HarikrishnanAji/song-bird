@@ -47,9 +47,21 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "FFMpegCore": {
+              "target": "Package",
+              "version": "[5.4.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.5-beta1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "Whisper.net": {
+              "target": "Package",
+              "version": "[1.9.1-preview1, )"
             }
           },
           "imports": [

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9789f98242069e1c8685f745763c39d15fccaa7")]
 [assembly: System.Reflection.AssemblyProductAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
