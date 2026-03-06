@@ -1,6 +1,6 @@
-****Lyrics Forge****
+****Song bird****
 
-Lyrics Forge is a lightweight full-stack application that automatically generates synced lyric videos from an audio file and a plain text lyrics file.
+Song Bird is a lightweight full-stack application that automatically generates synced lyric videos from an audio file and a plain text lyrics file.
 Upload an MP3 and a .txt file, and the system will:
 
 1. Auto-sync lyrics with audio using Aeneas
