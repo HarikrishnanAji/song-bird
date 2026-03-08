@@ -1,0 +1,14 @@
+#Backend Uploads
+LyricsForgeApi/Storage
+LyricsForgeApi/bin
+LyricsForgeApi/obj
+
+
+#Logs
+.logs
+
+#IDE/Os files
+.vscode
+.DS_Store
+Thumbs.db
+.gitignore
