@@ -1,0 +1,4 @@
+--Migration--
+
+step 1 : dotnet ef migrations add --name of migration--
+step 2 : dotnet ef database update
