@@ -1,4 +1,10 @@
-using LyricsForge.Api.Services.Interfaces;
+using Hangfire;
+using LyricsForge.Api.Data.Repository.Interface;
+using LyricsForge.Api.DTOs;
+using LyricsForge.Api.Helper;
+using LyricsForge.Api.Models;
+using LyricsForge.Api.Service.Interface;
+using LyricsForge.Api.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,22 +14,50 @@ namespace LyricsForge.Api.Controllers
     [ApiController]
     public class VideoController : ControllerBase
     {
-        private readonly IJobService _jobService;
-
-        public VideoController(IJobService jobService)
+        private readonly IRenderService _renderService;
+        public VideoController(
+            IRenderService renderService)
         {
-            _jobService = jobService;
+            _renderService = renderService;
         }
-        public async Task<IActionResult> CreateVideoAsync(IFormFile audio, IFormFile lyrics)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create( CreateVideoDto dto)
         {
-            try
-            {
-                var videoUrl = await _jobService.CreateJobAsync(audio, lyrics);
-                return Ok(new { videoUrl });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing the request.");
-            }
+            var id = Guid.NewGuid();
+            var projectPath = "Storage/"+$"{id}";
+            Directory.CreateDirectory(projectPath);
+
+            var audioPath = Path.Combine(projectPath, "audio_"+$"{id}.mp3");
+            var bgPath = Path.Combine(projectPath, "bg_"+$"{id}.mp4");
+
+            using (var stream = new FileStream(audioPath, FileMode.Create))
+                await dto.Audio.CopyToAsync(stream);
+
+            using (var stream = new FileStream(bgPath, FileMode.Create))
+                await dto.Background.CopyToAsync(stream);
+                await _renderService.AddVideoProjectAsync(id, dto.Title, audioPath, bgPath);
+            return Ok("Success : " + id);
+        }
+
+        [HttpPost("{id}/lyrics")]
+        public async Task<IActionResult> AddLyrics(Guid id, List<LyricsLine> lines)
+        {
+            await _renderService.AddRangeLyricsLinesAsync(id, lines);
+            return Ok();
+        }
+
+        [HttpPost("{id}/render")]
+        public IActionResult Render(Guid id)
+        {
+            BackgroundJob.Enqueue<RenderJob>(x => x.Execute(id));
+            return Ok("Rendering started");
+        }
+
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> Status(Guid id)
+        {
+            var project = await _renderService.GetVideoProjectWithLyricsByIdAsync(id);
+            return Ok(project.Status);
+        }
     }
-}}
+}

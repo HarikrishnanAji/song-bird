@@ -1,23 +1,38 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fea3509e-0f24-407e-afe2-dd64efd7c958</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FFMpegCore" Version="5.4.0" />
+    <PackageReference Include="Hangfire" Version="1.8.23" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.23" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.23" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Whisper.net" Version="1.9.1-preview1" />
+    <PackageReference Include="Xabe.FFmpeg" Version="6.0.2" />
+    <PackageReference Include="Xabe.FFmpeg.Downloader" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="AIModels\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Helpers\Interfaces\" />
-    <Folder Include="Models\" />
+    <Folder Include="Data\Repository\" />
+    <Folder Include="Data\Repository\Base\" />
+    <Folder Include="Data\Repository\Interface\" />
+    <Folder Include="DTOs\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Service\Interface\" />
+    <Folder Include="Util\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

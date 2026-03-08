@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("fea3509e-0f24-407e-afe2-dd64efd7c958")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9789f98242069e1c8685f745763c39d15fccaa7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b99d9558f26ff5232c50b8505adc7a2cfbc35270")]
 [assembly: System.Reflection.AssemblyProductAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LyricsForge.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
