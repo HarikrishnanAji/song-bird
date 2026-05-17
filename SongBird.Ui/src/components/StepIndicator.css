@@ -1,0 +1,86 @@
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.step-bubble {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.step-bubble.idle {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-dim);
+}
+
+.step-bubble.active {
+  background: var(--red);
+  border: 2px solid var(--red-bright);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(232,0,45,0.5);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.step-bubble.done {
+  background: rgba(232,0,45,0.15);
+  border: 2px solid var(--red);
+  color: var(--red-bright);
+}
+
+.step-ripple {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(232,0,45,0.4);
+}
+
+.step-info { min-width: 0; }
+
+.step-n {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.step-lbl {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.step-item:has(.active) .step-lbl,
+.step-item:has(.done) .step-lbl {
+  color: var(--text);
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  margin: 0 8px;
+  border-radius: 2px;
+  transition: background 0.4s ease;
+}
+.step-connector.done { background: var(--red); }
