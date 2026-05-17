@@ -1,4 +1,4 @@
-****Song bird Video Editor****
+## Song bird Video Editor
 
 A lyric video creation app built with React + .NET that generates videos using:
 
