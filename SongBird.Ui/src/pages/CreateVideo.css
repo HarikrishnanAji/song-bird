@@ -1,0 +1,8 @@
+.create-page .page-header h1 {
+  font-size: 56px;
+}
+
+.create-body {
+  margin-top: 32px;
+  animation: fadeUp 0.35s ease both;
+}
