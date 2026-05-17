@@ -1,10 +1,24 @@
-****Song bird****
+****Song bird Video Editor****
 
-Song Bird is a lightweight full-stack application that automatically generates synced lyric videos from an audio file and a plain text lyrics file.
-Upload an MP3 and a .txt file, and the system will:
+A lyric video creation app built with React + .NET that generates videos using:
 
-1. Auto-sync lyrics with audio using Aeneas
-2. Render a lyric video using FFmpeg
-3. Provide a downloadable MP4 output
+- 🎵 Audio files
+- 🖼️ Background images
+- 📝 SRT/LRC lyric files
 
-Built with ASP.NET Core and React, the app demonstrates process orchestration, file handling, and media pipeline automation.
+The app also includes an inbuilt SRT editor/generator for creating and editing synced lyrics easily.
+
+## ✨ Features
+
+- Generate lyric videos from SRT/LRC files
+- Upload audio and background images
+- Built-in lyrics editor
+- Real-time lyric preview
+- Export videos in MP4 format
+- Simple and modern UI
+
+## 🛠️ Tech Stack
+
+- React + Vite
+- ASP.NET Core Web API
+- FFmpeg
