@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SongBird.Api.Migrations
 {
     [DbContext(typeof(AppDBContext))]
+<<<<<<<< HEAD:SongBird.Api/Migrations/20260416184907_init7.Designer.cs
     [Migration("20260416184907_init7")]
     partial class init7
+========
+    [Migration("20260416185040_init1")]
+    partial class init1
+>>>>>>>> 4d999cd96092e4c8bb3d8352eb2a200151c8a3d3:SongBird.Api/Migrations/20260416185040_init1.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
