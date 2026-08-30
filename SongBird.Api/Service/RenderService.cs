@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using FFMpegCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 using SongBird.Api.Data;
 using SongBird.Api.Data.Models;
 using SongBird.Api.Data.Repository.Base;
@@ -21,10 +23,6 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
     {
         _logger = logger;
     }
-
-    string SafePath(string p) => Path.GetFullPath(p)
-                                    .Replace("\\", "/")
-                                    .Replace(":", "\\:");
 
     public async Task<string> CreateProjectAsync(CreateVideoDto dto)
     {
@@ -54,13 +52,14 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
         {
             await dto.Background.CopyToAsync(stream);
         }
-
+        var formattedTitle = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(dto.Title.ToLower());
         var project = new VideoProject
         {
             Id = id,
-            Title = dto.Title,
+            Title = formattedTitle,
             AudioPath = audioPath,
-            BackgroundPath = bgPath
+            BackgroundPath = bgPath,
         };
 
         await AddAsync(project);
@@ -68,38 +67,40 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
         return id.ToString();
     }
 
-    public async Task<string> RenderAsync(string audio, string background, string srtPath, Guid projectId, string title, bool isShort = false)
+    public async Task<string> RenderAsync(string audio, string background, string srtPath, Guid projectId, string title, string fontName,bool isShort = false)
     {
-        var folder = Path.Combine("Storage", projectId.ToString(), "Video");
+        var folder = Path.Combine("Storage", "Exports");
         Directory.CreateDirectory(folder);
-        var outputPath = Path.Combine(folder, $"{title}.mp4");
+        var fileName = title.Replace(" ", "_");
+        var outputPath = Path.Combine(folder, $"{fileName}.mp4");
 
         if (File.Exists(outputPath))
             File.Delete(outputPath);
 
-        var assPath = await ConvertSrtToAss(srtPath, projectId, title, isShort);
+        var assPath = await ConvertSrtToAss(srtPath, projectId, title, fontName, isShort);
         var bgPath = Path.GetFullPath(background).Replace("\\", "/");
         var audioPath = Path.GetFullPath(audio).Replace("\\", "/");
         var assFile = Path.GetFullPath(assPath).Replace("\\", "/");
 
-        // string? logoPath = null;
         var logoFolder = isShort ? "shorts" : "regular";
         var logoPath = Path.GetFullPath(Path.Combine("Assets", "branding", logoFolder, "logo.png"))
-            .Replace("\\", "/");
+                        .Replace("\\", "/");
         var fontsDir = Path.GetFullPath(Path.Combine("Assets", "fonts"))
-            .Replace("\\", "/");
-        var fontFile = Path.Combine("Assets", "fonts", "EDO SZ.ttf")
-            .Replace("\\", "/")
-            .Replace(":", "\\:");
+                        .Replace("\\", "/");
+        var rainPath = Path.GetFullPath(Path.Combine("Assets", "effects", "rain.mp4"))
+                        .Replace("\\", "/");
 
         string videoFilter;
-
+        string effect = "";
         if (isShort)
         {
-            videoFilter =
-                "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,format=yuv420p[bg];" +
-                "[2:v]scale=816:81[logo];" +
-                "[bg][logo]overlay=(W-w)/2:35[tmp];";
+            videoFilter = "[0:v]scale=1400:2500," +
+                    "zoompan=z='min(zoom+0.00015,1.10)':d=1:s=1080x1920[bg];" +
+                    "[3:v]scale=1080:1920,format=rgba,colorchannelmixer=aa=0.15[rain];" +
+                    "[bg][rain]overlay=0:0[rainbg];" +
+                    "[2:v]scale=500:-1[logo];" +
+                    "[rainbg][logo]overlay=(W-w)/2:35[tmp];";
+            effect = $"-stream_loop -1 -i \"{rainPath}\" ";
         }
         else
         {
@@ -114,6 +115,7 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
             $"-loop 1 -t 9999 -i \"{bgPath}\" " +
             $"-i \"{audioPath}\" " +
             $"-i \"{logoPath}\" " +
+            effect +
         "-filter_complex \"" +
         videoFilter +
         $"[tmp]ass=filename='{assFile.Replace(":", "\\:")}':fontsdir='{fontsDir.Replace(":", "\\:")}'[sub];" +
@@ -150,16 +152,26 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
 
         if (process.ExitCode != 0)
             throw new Exception(error);
-
-        var exportFolder = Path.Combine("Storage", "Exports");
-        Directory.CreateDirectory(exportFolder);
-
-        var exportPath = Path.Combine(exportFolder, Path.GetFileName(outputPath));
-        System.IO.File.Copy(outputPath, exportPath, true);
         return outputPath;
     }
 
-#region Private Methods
+    public async Task<string> DownloadVideoAsync(Guid id)
+    {
+        var video = await GetByIdAsync(id);
+        if (video == null)
+            return "Video project not found.";
+
+            var filePath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                video.VideoPath
+            );
+
+            if (!File.Exists(filePath))
+                return "Video file not found.";
+
+            return filePath;
+    }
+    #region Private Methods
     private static string EscapeWin(string path)
     {
         return Path.GetFullPath(path)
@@ -167,7 +179,7 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
             .Replace(":", "\\:");
     }
 
-    private async Task<string> ConvertSrtToAss(string srtPath, Guid projectId, string title, bool isShort)
+    private async Task<string> ConvertSrtToAss(string srtPath, Guid projectId, string title, string fontName, bool isShort)
     {
         var folder = Path.Combine("Storage", projectId.ToString(), "Video");
         Directory.CreateDirectory(folder);
@@ -191,9 +203,9 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
         await process.WaitForExitAsync();
 
         var assContent = await File.ReadAllTextAsync(assPath);
-        int fontSize = 32;
+        int fontSize = 27;
         if(isShort){
-            fontSize = 21;
+            fontSize = 16;
         }
         var styleBlock =
             "[Script Info]\n" +
@@ -206,7 +218,7 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
             "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, " +
             "Alignment, MarginL, MarginR, MarginV, Encoding\n" +
 
-            $"Style: Default,EDO SZ,{fontSize},&H00FFFFFF,&H000000FF,&H00000000,&H00000000," +
+            $"Style: Default,{fontName},{fontSize},&H00FFFFFF,&H000000FF,&H00000000,&H00000000," +
                 "1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1\n\n";
 
         assContent = Regex.Replace(assContent, @"\[V4\+ Styles\][\s\S]*?\[Events\]", "[Events]");
@@ -215,7 +227,7 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
         {
             assContent = assContent.Replace(
                     "[Events]",
-                    "[Events]\nDialogue: 0,0:00:00.50,0:00:02.30,Default,,0,0,0,,{\\fad(500,500)\\an5}" + title + "\n"
+                    "[Events]\nDialogue: 0,0:00:00.50,0:00:02.30,Default,,0,0,0,,{\\fad(500,500)\\an5}" + title  + "\\N{\\fs18}-- lyrics --\n"
                 );     
         }
 
@@ -226,9 +238,7 @@ public class RenderService : BaseRepository<VideoProject>, IRenderService
         );
 
         await File.WriteAllTextAsync(assPath, assContent);
-
         return assPath;
     }
-
-#endregion
+    #endregion
 }

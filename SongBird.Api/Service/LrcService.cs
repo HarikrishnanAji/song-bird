@@ -15,8 +15,7 @@ public class LrcService : ILrcService
     {
         _httpClient = httpClient;
     }
-    private static readonly Regex regex =
-    new Regex(Messages.RegEx);
+    private static readonly Regex regex = new Regex(Messages.RegEx);
 
     public List<LyricLine> Parse(string path)
     {

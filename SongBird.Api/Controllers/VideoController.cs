@@ -32,56 +32,16 @@ namespace SongBird.Api.Controllers
             }
             catch(Exception ex)
             {
-                throw new Exception(ex.StackTrace); 
+                return BadRequest(ex.StackTrace); 
             }
             return Ok(response); 
-        }
-
-        /// <summary>
-        /// Extract LRC
-        /// </summary>
-        [HttpPost("lrc")]
-        public async Task<IActionResult> HandleLrc(Guid id, string? artist, string? title, IFormFile? lrcFile = null)
-        {
-            var project = await _renderService.GetByIdAsync(id);
-            if (project == null)
-                return NotFound("Project not found");
-            string lrcContent;
-            if (lrcFile != null && lrcFile.Length > 0)
-            {
-                if (!Path.GetExtension(lrcFile.FileName).Equals(".lrc", StringComparison.OrdinalIgnoreCase))
-                    return BadRequest("Only .lrc files are allowed");
-
-                using var reader = new StreamReader(lrcFile.OpenReadStream());
-                lrcContent = await reader.ReadToEndAsync();
-
-                if (string.IsNullOrWhiteSpace(lrcContent))
-                    return BadRequest("Empty LRC file");
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(title))
-                    return BadRequest("Artist and Title required if no file provided");
-
-                lrcContent = await _lrcService.GetLrc(artist, title);
-
-                if (string.IsNullOrWhiteSpace(lrcContent))
-                    return BadRequest("LRC not found from API");
-            }
-
-            var lrcPath = await _lrcService.SaveLrc(id, lrcContent);
-
-            project.LrcPath = lrcPath;
-            project.Status = "LRC Ready"; 
-            await _renderService.UpdateAsync(project);
-            return Ok(new { lrcPath });
         }
 
         /// <summary>
         /// Render Video
         /// </summary>
         [HttpPost("render")]
-        public async Task<IActionResult> Render(Guid id, IFormFile? srtFile = null, bool isShort = false)
+        public async Task<IActionResult> Render(Guid id, IFormFile? srtFile = null, AppFontEnum fontName = AppFontEnum.MagicalStylishScriptDemo, bool isShort = false)
         {
             var project = await _renderService.GetByIdAsync(id);
 
@@ -114,8 +74,9 @@ namespace SongBird.Api.Controllers
                 srtPath,
                 id,
                 project.Title,
+                GetFontName(fontName),
                 isShort);
-
+            project.IsShort = isShort;
             project.VideoPath = videoPath;
             project.Status = "Video Generated";
             await _renderService.UpdateAsync(project);
@@ -141,9 +102,39 @@ namespace SongBird.Api.Controllers
                     p.BackgroundPath,
                     p.LrcPath,
                     p.VideoPath,
-                    p.Status
+                    p.Status,
+                    p.IsShort
                 }));
         }
         
+        /// <summary>
+        /// Download Videos
+        /// </summary>
+        [HttpGet("{id}/download")]
+        public async Task<IActionResult> DownloadVideo(Guid id)
+        {
+            var filePath = await _renderService.DownloadVideoAsync(id);
+         
+            return PhysicalFile(
+                filePath,
+                "video/mp4",
+                Path.GetFileName(filePath)
+            );
+        }
+        #region  Private Methods
+        private static string GetFontName(AppFontEnum font)
+        {
+            return font switch
+            {
+                AppFontEnum.EdoSZ => "EDO SZ",
+                AppFontEnum.MagicalStylishScriptDemo => "Magical Stylish Script Demo",
+                AppFontEnum.Malvides => "Malvides",
+                AppFontEnum.HighEmpathy => "High Empathy",
+                AppFontEnum.TheGwathmey => "The Gwathmey",
+                AppFontEnum.Charcoal => "Charcoal",
+                _ => "EDO SZ"
+            };
+        }
+        #endregion
     }
 }

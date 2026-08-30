@@ -11,7 +11,7 @@ public class BaseRepository<T> where T : class
     public BaseRepository(AppDBContext context)
     {
         _context = context;
-        _dbSet = context.Set<T>();
+        _dbSet = _context.Set<T>();
     }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
