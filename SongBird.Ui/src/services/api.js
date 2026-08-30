@@ -1,5 +1,5 @@
 // const BASE = import.meta.env.VITE_API_URL || "http://localhost:5260/api";
-const BASE = "https://localhost:7252/api";
+const BASE = "http://localhost:5260/api";
 
 async function handleResponse(res) {
   if (!res.ok) {
@@ -48,6 +48,17 @@ export const videoApi = {
     const res = await fetch(`${BASE}/Video/render?${params}`, { method: "POST", body: fd });
     return handleResponse(res);
   },
+  /**
+   * GET /api/Video/{id}/download
+   * Downloads a video file
+   */
+  async download({ id }) {
+    const res = await fetch(`${BASE}/Video/${id}/download`);
+    if (!res.ok) {
+      throw new Error("Download failed");
+    }
+    return await res.blob();
+  },
 
   /**
    * GET /api/Video
@@ -56,5 +67,5 @@ export const videoApi = {
   async getAll() {
     const res = await fetch(`${BASE}/Video`);
     return handleResponse(res);
-  },
+  }
 };

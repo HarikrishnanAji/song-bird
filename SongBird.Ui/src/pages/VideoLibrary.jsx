@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { videoApi } from "../services/api.js";
 import VideoCard from "../components/VideoCard.jsx";
 import "./VideoLibrary.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const FILTERS = ["All", "Rendered", "Pending", "Shorts"];
 
@@ -42,7 +44,7 @@ export default function VideoLibrary() {
       {/* Toolbar */}
       <div className="lib-toolbar">
         <div className="lib-search">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><FontAwesomeIcon icon={faSearch}/></span>
           <input
             className="search-input"
             type="text"

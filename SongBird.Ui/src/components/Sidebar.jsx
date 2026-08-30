@@ -1,5 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import "./Sidebar.css";
+import logo from "../../assets/song_bird_logo.png";
+import { width } from "@fortawesome/free-regular-svg-icons/faAddressBook";
 
 const NAV = [
   {
@@ -57,11 +59,12 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="logo-mark">
-          <span className="logo-bars">
+          {/* <span className="logo-bars">
             {[1, 2, 3, 4, 5].map((i) => (
               <span key={i} className="bar" style={{ animationDelay: `${i * 0.1}s` }} />
             ))}
-          </span>
+          </span> */}
+          <img src={logo} alt="Song Bird Logo" style={{ width: "3rem" }} className="logo-image" />
         </div>
         <div className="logo-text">
           <span className="logo-main">Song Bird</span>
@@ -86,13 +89,13 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
-        <div className="nav-section-label" style={{ marginTop: 24 }}>Files</div>
+        {/* <div className="nav-section-label" style={{ marginTop: 24 }}>Files</div>
         {EXTRA.map((e) => (
           <div key={e.label} className="nav-item nav-extra">
             <span className="nav-icon-text">{e.icon}</span>
             <span className="nav-label">{e.label}</span>
           </div>
-        ))}
+        ))} */}
       </nav>
 
       {/* Equalizer visualizer */}

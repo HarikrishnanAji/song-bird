@@ -4,14 +4,14 @@ import { videoApi } from "../services/api.js";
 import StatCard from "../components/StatCard.jsx";
 import VideoCard from "../components/VideoCard.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGuitar,faVideo,faCircleCheck,faMusic,faMobileScreen,faRotate} from "@fortawesome/free-solid-svg-icons";
+import {faGuitar,faVideo,faCircleCheck,faMusic,faMobileScreen,faRotate,faFilm,faMobile,faClock} from "@fortawesome/free-solid-svg-icons";
 import WaveformDecor from "../components/WaveformDecor.jsx";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);     
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -21,12 +21,32 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const stats = [
-    { label: "Total Videos", value: loading ? "—" : videos.length, icon: (<FontAwesomeIcon icon={faVideo} style={{ color: "#e8002d" }} />), delta: "+3 this week" },
-    { label: "Renders Done", value: loading ? "—" : videos.filter(v => v.rendered || v.status === "done").length, icon: (<FontAwesomeIcon icon={faCircleCheck} style={{ color: "#e8002d" }} />), delta: "Ready to download" },
-    { label: "LRC Synced", value: loading ? "—" : videos.filter(v => v.lrcUploaded || v.hasLrc).length, icon: (<FontAwesomeIcon icon={faMusic} style={{ color: "#e8002d" }} />), delta: "Lyrics attached" },
-    { label: "Short Videos", value: loading ? "—" : videos.filter(v => v.isShort).length, icon: (<FontAwesomeIcon icon={faMobileScreen} style={{ color: "#e8002d" }} />), delta: "Reels format" },
-  ];
+const stats = [
+  {
+    label: "Projects",
+    value: loading ? "—" : videos.length,
+    icon: <FontAwesomeIcon icon={faVideo} style={{ color: "#e8002d" }} />,
+    delta: "Total creations"
+  },
+  {
+    label: "Long Videos",
+    value: loading ? "—" : videos.filter(v => !v.isShort).length,
+    icon: <FontAwesomeIcon icon={faFilm} style={{ color: "#e8002d" }} />,
+    delta: "Full format"
+  },
+  {
+    label: "Shorts",
+    value: loading ? "—" : videos.filter(v => v.isShort).length,
+    icon: <FontAwesomeIcon icon={faMobileScreen} style={{ color: "#e8002d" }} />,
+    delta: "Reels format"
+  },
+  {
+    label: "Rendering",
+    value: loading ? "—" : videos.filter(v => !v.rendered && v.status !== "done").length,
+    icon: <FontAwesomeIcon icon={faClock} style={{ color: "#e8002d" }} />,
+    delta: "In progress"
+  },
+];
 
   const recent = videos.slice(0, 4);
 
@@ -78,24 +98,7 @@ export default function Dashboard() {
       fontSize: "40px",
     }}
   />
-</div>
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
+</div>               
               </span>
             </div>
             {/* <div className="vinyl-arm" /> */}

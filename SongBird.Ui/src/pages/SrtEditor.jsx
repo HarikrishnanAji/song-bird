@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "./SrtEditor.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faComment, faFolder, faMessage, faMusic} from "@fortawesome/free-solid-svg-icons";
 
 export default function SrtEditor() {
   const audioRef = useRef(null);
@@ -438,13 +440,13 @@ export default function SrtEditor() {
             onClick={lyricsText.trim() ? startLyricsMode : undefined}
             disabled={!lyricsText.trim() || !audioFile || lyricsMode}
           >
-            🎤 Lyrics Mode
+            Generate Lyrics
           </button>
           <button className="btn-ghost" onClick={copySrt} disabled={subs.length === 0}>
-            {copied ? "✓ Copied" : "📋 Copy SRT"}
+            {copied ? "✓ Copied" : "Copy SRT"}
           </button>
           <button className="btn-primary" onClick={exportSrt} disabled={subs.length === 0}>
-            ↓ Download SRT
+            Download SRT
           </button>
         </div>
       </div>
@@ -456,12 +458,12 @@ export default function SrtEditor() {
             <label htmlFor="audio-input" className="file-label">
               {audioFile ? (
                 <>
-                  <span className="file-icon">📁</span>
+                  <span className="file-icon"><FontAwesomeIcon icon={faFolder} style={{ color: "#e8002d" }} /></span>
                   <span className="file-name">{audioFile.name}</span>
                 </>
               ) : (
                 <>
-                  <span className="file-icon">🎵</span>
+                  <span className="file-icon"><FontAwesomeIcon icon={faMusic} style={{ color: "#e8002d" }} /></span>
                   <span className="file-text">Click to load audio</span>
                 </>
               )}
@@ -478,7 +480,7 @@ export default function SrtEditor() {
           {/* Lyrics input section */}
           <div className="lyrics-input-section">
             <label className="lyrics-label">
-              <span className="lyrics-icon">🎤</span> Paste or type lyrics (one per line)
+              <span className="lyrics-icon"></span> Paste or type lyrics (one per line)
             </label>
             <textarea
               ref={lyricsInputRef}
@@ -578,7 +580,7 @@ export default function SrtEditor() {
           <div className="subs-list">
             {subs.length === 0 ? (
               <div className="empty-subs">
-                <span className="empty-icon">💬</span>
+                <span className="empty-icon"><FontAwesomeIcon icon={faMessage} style={{ color: "#e8002d" }} /></span>
                 <span className="empty-text">{audioFile ? "No subtitles yet. Add one!" : "Load audio first."}</span>
               </div>
             ) : (

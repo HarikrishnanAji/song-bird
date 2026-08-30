@@ -1,4 +1,5 @@
 import "./VideoCard.css";
+import { videoApi } from "../services/api";
 
 const STATUS_MAP = {
   created: { label: "Created", color: "#666" },
@@ -10,7 +11,13 @@ const STATUS_MAP = {
 
 export default function VideoCard({ video }) {
   const status = STATUS_MAP[video.status] || STATUS_MAP.created;
-
+  const downloadVideo = async (id) => {
+    const blob = await videoApi.download({ id });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${video.title}.mp4`;
+    link.click();
+  };
   return (
     <div className="video-card">
       <div className="video-thumb">
@@ -21,9 +28,9 @@ export default function VideoCard({ video }) {
             <span className="thumb-note">♬</span>
           </div>
         )}
-        <div className="thumb-overlay">
+        {/* <div className="thumb-overlay">
           <div className="thumb-play">▶</div>
-        </div>
+        </div> */}
         {video.isShort && <span className="short-badge">SHORT</span>}
       </div>
 
@@ -45,7 +52,9 @@ export default function VideoCard({ video }) {
             {status.label}
           </span>
           <div className="video-actions">
-            <button className="btn-icon" title="Download">↓</button>
+            <button className="btn-icon" title="Download" onClick={() => downloadVideo(video.id)}>
+              ↓
+            </button>
           </div>
         </div>
       </div>

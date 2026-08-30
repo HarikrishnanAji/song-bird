@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StepIndicator from "../components/StepIndicator.jsx";
 import Step1Upload from "../components/steps/Step1Upload.jsx";
-import Step2Lyrics from "../components/steps/Step2Lyrics.jsx";
-import Step3Render from "../components/steps/Step3Render.jsx";
+import Step2Render from "../components/steps/Step2Render.jsx";
 import StepSuccess from "../components/steps/StepSuccess.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faMusic,faRotate,faVideo} from "@fortawesome/free-solid-svg-icons";
@@ -11,8 +10,8 @@ import "./CreateVideo.css";
 
 const STEPS = [
   { num: 1, label: "Upload Media", icon: (<FontAwesomeIcon icon={faMusic} style={{ color: "#ffffffff" }} />) },
-  { num: 2, label: "Sync Lyrics",  icon: (<FontAwesomeIcon icon={faRotate} style={{ color: "#ffffffff" }} />) },
-  { num: 3, label: "Render Video", icon: (<FontAwesomeIcon icon={faVideo} style={{ color: "#ffffffff" }} />) },
+  // { num: 2, label: "Sync Lyrics",  icon: (<FontAwesomeIcon icon={faRotate} style={{ color: "#ffffffff" }} />) },
+  { num: 2, label: "Render Video", icon: (<FontAwesomeIcon icon={faVideo} style={{ color: "#ffffffff" }} />) },
 ];
 
 export default function CreateVideo() {
@@ -29,12 +28,7 @@ export default function CreateVideo() {
     setStep(2);
   };
 
-  const handleStep2Done = ({ artist, title }) => {
-    setVideoMeta({ artist, title });
-    setStep(3);
-  };
-
-  const handleStep3Done = () => {
+  const handleStep2Done = () => {
     setDone(true);
   };
 
@@ -64,19 +58,12 @@ export default function CreateVideo() {
           />
         ) : step === 1 ? (
           <Step1Upload onDone={handleStep1Done} />
-        ) : step === 2 ? (
-          <Step2Lyrics
-            videoId={videoId}
-            initialTitle={videoMeta.title}
-            onDone={handleStep2Done}
-            onBack={() => setStep(1)}
-          />
         ) : (
-          <Step3Render
+          <Step2Render
             videoId={videoId}
             videoMeta={videoMeta}
-            onDone={handleStep3Done}
-            onBack={() => setStep(2)}
+            onDone={handleStep2Done}
+            onBack={() => setStep(1)}
           />
         )}
       </div>
